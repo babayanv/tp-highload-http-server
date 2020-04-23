@@ -2,10 +2,8 @@
 #include "http_server/exception.hpp"
 
 #include <sys/socket.h>
-#include <arpa/inet.h>
 #include <unistd.h>
 
-#include <utility>
 #include <sstream>
 
 
@@ -21,8 +19,7 @@ Connection::Connection(Connection&& other) noexcept
 }
 
 
-Connection& Connection::operator=(Connection&& other)
-{
+Connection& Connection::operator=(Connection&& other) noexcept {
     close();
 
     m_sock_fd = other.m_sock_fd.extract();
@@ -125,7 +122,7 @@ void Connection::read_exact(void* data, size_t len)
 }
 
 
-std::string Connection::read_all(size_t limit) {
+std::string Connection::read_all(long limit) {
     std::ostringstream oss;
 
     while (oss.tellp() < limit) {
@@ -133,7 +130,7 @@ std::string Connection::read_all(size_t limit) {
 
         size_t bytes_read = read(chunk.data(), chunk.size());
 
-        oss.write(chunk.c_str(), bytes_read);
+        oss.write(chunk.c_str(), static_cast<long>(bytes_read));
 
         if (bytes_read < chunk.size()) {
             break;

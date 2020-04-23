@@ -18,7 +18,7 @@ public:
 
     ~Connection() noexcept = default;
 
-    Connection& operator=(Connection&& other);
+    Connection& operator=(Connection&& other) noexcept;
 
     Connection(const Connection& other) = delete;
     Connection& operator=(const Connection& other) = delete;
@@ -30,7 +30,7 @@ public:
     void write_exact(const void* data, size_t len) const;
     size_t read(void* data, size_t len);
     void read_exact(void* data, size_t len);
-    std::string read_all(size_t limit);
+    std::string read_all(long limit);
 
 private:
     utils::FileDescriptor m_sock_fd;
