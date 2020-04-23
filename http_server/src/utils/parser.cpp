@@ -19,7 +19,7 @@ std::tuple<std::string_view, std::string_view, uint16_t, size_t> parse_args(char
         std::from_chars(sv.data(), sv.data() + sv.size(), port);
     }
 
-    int max_connect{};
+    size_t max_connect{};
     {
         std::string_view sv(argv[4]);
         std::from_chars(sv.data(), sv.data() + sv.size(), max_connect);
