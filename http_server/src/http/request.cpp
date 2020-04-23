@@ -83,6 +83,8 @@ bool RequestBuilder::validate_path(const std::string_view& doc_root_sv) {
 
         m_request.path.replace(url_encode_pos, 3, 1, url_decode);
     }
+
+    return true;
 }
 
 
