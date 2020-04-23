@@ -6,6 +6,14 @@
 
 namespace http {
 
+
+namespace method {
+    using value_type = std::string_view;
+    constexpr value_type M_GET = "GET";
+    constexpr value_type M_HEAD = "HEAD";
+} // namespace method
+
+
 namespace status {
     using value_type = std::string_view;
     constexpr value_type S_200_OK = "200 OK";
@@ -13,6 +21,7 @@ namespace status {
     constexpr value_type S_403_F = "403 Forbidden";
     constexpr value_type S_404_NF = "404 Not Found";
 } // namespace status
+
 
 namespace mime_type {
     using value_type = std::string_view;
@@ -28,9 +37,12 @@ namespace mime_type {
     constexpr value_type MT_SWF = "application/x-shockwave-flash";
 } // namespace mime_type
 
+
     constexpr std::string_view CRLF = "\r\n";
 
+
     mime_type::value_type determine_mime_type(const std::string_view& file_path);
+
 
 } // namespace http
 
