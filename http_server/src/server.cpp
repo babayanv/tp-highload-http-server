@@ -230,7 +230,7 @@ void Server::work(const std::string& doc_root) {
         std::unique_lock lock(mut);
         m_cv.wait(lock,
             [this]{
-                m_spmc_queue.empty();
+                return !this->m_spmc_queue.empty();
             }
         );
 

@@ -45,6 +45,12 @@ FileDescriptor& FileDescriptor::operator=(int fd)
 }
 
 
+FileDescriptor::operator int() const noexcept
+{
+    return m_fd;
+}
+
+
 void FileDescriptor::close()
 {
     if (m_fd == -1)
