@@ -12,5 +12,5 @@ int main(int argc, char* argv[]) {
     auto [ config_path, address, port, max_connect ] = utils::parse_args(argv);
     auto [ cpu_limit, thread_limit, doc_root ] = utils::parse_config(config_path);
 
-    std::cout << cpu_limit << ' ' << thread_limit << ' ' << doc_root;
+
 }
