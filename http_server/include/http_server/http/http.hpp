@@ -20,6 +20,7 @@ namespace status {
     constexpr value_type S_400_BR = "400 Bad Request";
     constexpr value_type S_403_F = "403 Forbidden";
     constexpr value_type S_404_NF = "404 Not Found";
+    constexpr value_type S_405_MNA = "405 Method Not Allowed";
 } // namespace status
 
 
