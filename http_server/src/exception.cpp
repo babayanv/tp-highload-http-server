@@ -1,6 +1,7 @@
 #include "http_server/exception.hpp"
 
 #include <cstring>
+#include <utility>
 
 
 ErrnoException::ErrnoException()
@@ -9,10 +10,16 @@ ErrnoException::ErrnoException()
 }
 
 
-ErrnoException::ErrnoException(const std::string& what_arg)
-        : m_msg(what_arg)
+ErrnoException::ErrnoException(std::string  what_arg)
+        : m_msg(std::move(what_arg))
 {
     m_msg += std::strerror(errno);
+}
+
+
+ErrnoException::ErrnoException(const ErrnoException& other) noexcept
+    : m_msg(other.m_msg)
+{
 }
 
 

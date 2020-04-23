@@ -9,9 +9,10 @@ class ErrnoException : public std::exception
 {
 public:
     ErrnoException();
-    explicit ErrnoException(const std::string& what_arg);
+    explicit ErrnoException(std::string what_arg);
+    ErrnoException(const ErrnoException& other) noexcept;
 
-    virtual ~ErrnoException() noexcept = default;
+    ~ErrnoException() noexcept override = default;
 
     const char* what() const noexcept override;
 
@@ -24,7 +25,7 @@ class FDError : public ErrnoException
 {
 public:
     FDError() = default;
-    FDError(const std::string& what_arg) : ErrnoException(what_arg) {}
+    explicit FDError(const std::string& what_arg) : ErrnoException(what_arg) {}
 };
 
 
@@ -32,7 +33,7 @@ class ConnectionError : public ErrnoException
 {
 public:
     ConnectionError() = default;
-    ConnectionError(const std::string& what_arg) : ErrnoException(what_arg) {}
+    explicit ConnectionError(const std::string& what_arg) : ErrnoException(what_arg) {}
 };
 
 
@@ -40,7 +41,7 @@ class ServerError : public ErrnoException
 {
 public:
     ServerError() = default;
-    ServerError(const std::string& what_arg) : ErrnoException(what_arg) {}
+    explicit ServerError(const std::string& what_arg) : ErrnoException(what_arg) {}
 };
 
 #endif // EXCEPTION_HPP
