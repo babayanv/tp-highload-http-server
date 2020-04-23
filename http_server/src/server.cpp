@@ -236,5 +236,9 @@ void Server::work(const std::string& doc_root) {
 
         int fd;
         m_spmc_queue.pop(fd);
+
+        Connection conn(fd);
+
+        std::string msg = conn.read_all(4096);
     }
 }
