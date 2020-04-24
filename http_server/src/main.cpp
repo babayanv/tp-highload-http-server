@@ -1,5 +1,6 @@
 #include "http_server/utils/parser.hpp"
 #include "http_server/server.hpp"
+#include "http_server/exception.hpp"
 
 #include <iostream>
 
@@ -13,5 +14,10 @@ int main(int argc, char* argv[]) {
     auto [ config_path, address, port, max_connect ] = utils::parse_args(argv);
     auto [ cpu_limit, thread_limit, doc_root ] = utils::parse_config(config_path);
 
-    Server::start(address, port, max_connect, thread_limit, doc_root).run();
+    try {
+        Server::start(address, port, max_connect, thread_limit, doc_root).run();
+    }
+    catch (const ServerError& se) {
+        std::cerr << se.what() << std::endl;
+    }
 }
