@@ -205,7 +205,7 @@ void Server::accept_clients()
             throw ServerError("Error accepting connection: ");
         }
 
-        add_epoll(conn_fd, EPOLLIN | EPOLLRDHUP);
+        add_epoll(conn_fd, EPOLLIN | EPOLLRDHUP | EPOLLET);
     }
 }
 
@@ -236,7 +236,9 @@ void Server::work(const std::string& doc_root) {
         );
 
         int fd;
-        m_spmc_queue.pop(fd);
+        if (!m_spmc_queue.pop(fd)) {
+            continue;
+        }
 
         Connection conn(fd);
 
