@@ -62,7 +62,12 @@ bool RequestBuilder::validate_method() {
 
 
 bool RequestBuilder::validate_path(const std::string_view& doc_root_sv) {
-    if (m_request.path.find("..") != std::string::npos) {
+    size_t query_string_pos = m_request.path.find('?');
+    if (query_string_pos != std::string::npos) {
+        m_request.path.resize(query_string_pos);
+    }
+
+    if (m_request.path.find("../") != std::string::npos) {
         m_status = status::S_403_F;
         return false;
     }
