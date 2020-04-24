@@ -1,5 +1,6 @@
 #include "http_server/server.hpp"
 #include "http_server/exception.hpp"
+#include "http_server/http/request.hpp"
 
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -240,5 +241,7 @@ void Server::work(const std::string& doc_root) {
         Connection conn(fd);
 
         std::string msg = conn.read_all(4096);
+
+        auto [ request, status ] = http::build_request(msg, doc_root);
     }
 }
