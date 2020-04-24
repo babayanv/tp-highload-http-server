@@ -20,4 +20,6 @@ int main(int argc, char* argv[]) {
     catch (const ServerError& se) {
         std::cerr << se.what() << std::endl;
     }
+
+    return 0;
 }
