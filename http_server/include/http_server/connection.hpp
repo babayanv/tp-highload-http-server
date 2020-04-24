@@ -24,7 +24,6 @@ public:
     Connection& operator=(const Connection& other) = delete;
 
     void close();
-    [[nodiscard]] bool is_opened() const noexcept;
 
     size_t write(const void* data, size_t len) const;
     void write_exact(const void* data, size_t len) const;

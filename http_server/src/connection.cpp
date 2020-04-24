@@ -139,9 +139,3 @@ std::string Connection::read_all(long limit) {
 
     return oss.str();
 }
-
-
-bool Connection::is_opened() const noexcept
-{
-    return m_sock_fd.is_opened();
-}
