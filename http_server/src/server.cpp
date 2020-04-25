@@ -25,10 +25,8 @@ Server& Server::get_instance() {
 Server::Server(const std::string_view& address, uint16_t port, size_t max_connect, size_t thread_limit, const std::string& doc_root)
     : m_spmc_queue(max_connect)
 {
-    std::signal(SIGINT, handle_signal);
     std::signal(SIGTERM, handle_signal);
     std::signal(SIGABRT, handle_signal);
-    std::signal(SIGPIPE, SIG_IGN);
 
     for (size_t i = 0; i < thread_limit; ++i) {
         m_workers.emplace_back([this, doc_root] { this->work(doc_root); });
