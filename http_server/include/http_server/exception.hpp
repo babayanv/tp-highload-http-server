@@ -10,11 +10,10 @@ class ErrnoException : public std::exception
 public:
     ErrnoException();
     explicit ErrnoException(std::string what_arg);
-    ErrnoException(const ErrnoException& other) noexcept;
 
     ~ErrnoException() noexcept override = default;
 
-    const char* what() const noexcept override;
+    [[nodiscard]] const char* what() const noexcept override;
 
 private:
     std::string m_msg;

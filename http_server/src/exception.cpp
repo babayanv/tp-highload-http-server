@@ -17,12 +17,6 @@ ErrnoException::ErrnoException(std::string  what_arg)
 }
 
 
-ErrnoException::ErrnoException(const ErrnoException& other) noexcept
-    : m_msg(other.m_msg)
-{
-}
-
-
 const char* ErrnoException::what() const noexcept {
     return m_msg.c_str();
 }

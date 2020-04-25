@@ -44,7 +44,7 @@ Server::Server(const std::string_view& address, uint16_t port, size_t max_connec
     catch (const ServerError& se)
     {
         close();
-        throw se;
+        throw;
     }
 }
 
