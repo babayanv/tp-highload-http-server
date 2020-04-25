@@ -26,13 +26,11 @@ Server::Server(const std::string_view& address, uint16_t port, size_t max_connec
     : m_spmc_queue(max_connect)
 {
     std::signal(SIGINT, handle_signal);
+    std::signal(SIGTERM, handle_signal);
+    std::signal(SIGABRT, handle_signal);
 
     for (size_t i = 0; i < thread_limit; ++i) {
-        m_workers.emplace_back(
-                [this, doc_root] {
-                    this->work(doc_root);
-                }
-        );
+        m_workers.emplace_back([this, doc_root] { this->work(doc_root); });
     }
 
     try
@@ -102,6 +100,10 @@ void Server::close()
 
 
 void Server::join_workers() {
+    if (m_done) {
+        return;
+    }
+
     m_done = true;
     m_cv.notify_all();
 
@@ -232,9 +234,13 @@ void Server::work(const std::string& doc_root) {
         std::unique_lock lock(mut);
         m_cv.wait(lock,
             [this]{
-                return !this->m_spmc_queue.empty();
+                return !m_spmc_queue.empty() || m_done;
             }
         );
+
+        if (m_done) {
+            break;
+        }
 
         int fd;
         if (!m_spmc_queue.pop(fd)) {
