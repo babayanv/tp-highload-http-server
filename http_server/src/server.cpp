@@ -28,6 +28,7 @@ Server::Server(const std::string_view& address, uint16_t port, size_t max_connec
     std::signal(SIGINT, handle_signal);
     std::signal(SIGTERM, handle_signal);
     std::signal(SIGABRT, handle_signal);
+    std::signal(SIGPIPE, SIG_IGN);
 
     for (size_t i = 0; i < thread_limit; ++i) {
         m_workers.emplace_back([this, doc_root] { this->work(doc_root); });

@@ -45,7 +45,7 @@ void RequestBuilder::get_version() {
     size_t pos = m_request_sv.find(CRLF);
 
     m_request.version = m_request_sv.substr(0, pos);
-    m_request_sv.remove_prefix(pos + CRLF.size());
+    m_request_sv.remove_prefix(pos);
 }
 
 
@@ -95,6 +95,11 @@ bool RequestBuilder::validate_path(const std::string_view& doc_root_sv) {
 
 bool RequestBuilder::validate_version() {
     if (!m_request.version.starts_with("HTTP/")) {
+        m_status = status::S_400_BR;
+        return false;
+    }
+
+    if (!m_request_sv.starts_with(CRLF)) {
         m_status = status::S_400_BR;
         return false;
     }
