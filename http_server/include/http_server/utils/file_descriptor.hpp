@@ -19,7 +19,7 @@ public:
     void close();
     int extract();
 
-    bool is_opened() const noexcept;
+    [[nodiscard]] bool is_opened() const noexcept;
 
 private:
     int m_fd = -1;

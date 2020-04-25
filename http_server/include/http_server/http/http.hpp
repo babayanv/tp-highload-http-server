@@ -42,7 +42,7 @@ namespace mime_type {
     constexpr std::string_view CRLF = "\r\n";
 
 
-    mime_type::value_type determine_mime_type(const std::string_view& file_path);
+    mime_type::value_type determine_content_type(const std::string_view& file_path);
 
 
 } // namespace http

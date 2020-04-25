@@ -9,45 +9,37 @@
 
 
 Connection::Connection(int sock_fd)
-        : m_sock_fd(sock_fd)
+    : m_sock_fd(sock_fd)
 {
 }
 
 
 Connection::Connection(Connection&& other) noexcept
-        : m_sock_fd(other.m_sock_fd.extract())
+    : m_sock_fd(other.m_sock_fd.extract())
 {
 }
 
 
 Connection& Connection::operator=(Connection&& other) noexcept {
     close();
-
     m_sock_fd = other.m_sock_fd.extract();
-
     return *this;
 }
 
 
-void Connection::close()
-{
+void Connection::close() {
     m_sock_fd.close();
 }
 
 
-size_t Connection::write(const void* data, size_t len) const
-{
-    while (true)
-    {
+size_t Connection::write(const void* data, size_t len) const {
+    while (true) {
         ssize_t bytes_written = ::write(m_sock_fd, data, len);
-        if (bytes_written < 0)
-        {
-            if (errno == EINTR)
-            {
+        if (bytes_written < 0) {
+            if (errno == EINTR) {
                 continue;
             }
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
-            {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 return 0;
             }
 
@@ -59,17 +51,14 @@ size_t Connection::write(const void* data, size_t len) const
 }
 
 
-void Connection::write_exact(const void* data, size_t len) const
-{
+void Connection::write_exact(const void* data, size_t len) const {
     size_t bytes_written_total = 0;
 
-    while (bytes_written_total != len)
-    {
+    while (bytes_written_total != len) {
         const void* buff_begin = static_cast<const char*>(data) + bytes_written_total;
 
         size_t bytes_written = write(buff_begin, len - bytes_written_total);
-        if (bytes_written == 0)
-        {
+        if (bytes_written == 0) {
             throw ConnectionError("Unable to write exactly " + std::to_string(len) + " bytes: ");
         }
 
@@ -79,20 +68,15 @@ void Connection::write_exact(const void* data, size_t len) const
 
 
 
-size_t Connection::read(void* data, size_t len)
-{
-    while (true)
-    {
+size_t Connection::read(void* data, size_t len) {
+    while (true) {
         ssize_t bytes_read = ::read(m_sock_fd, data, len);
 
-        if (bytes_read < 0)
-        {
-            if (errno == EINTR)
-            {
+        if (bytes_read < 0) {
+            if (errno == EINTR) {
                 continue;
             }
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
-            {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 return 0;
             }
 

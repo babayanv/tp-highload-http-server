@@ -22,46 +22,35 @@ FileDescriptor::FileDescriptor(FileDescriptor&& other) noexcept
 }
 
 
-FileDescriptor::~FileDescriptor() noexcept
-{
-    try
-    {
+FileDescriptor::~FileDescriptor() noexcept {
+    try {
         close();
     }
-    catch(const FDError& fde)
-    {
+    catch(const FDError& fde) {
         std::cerr << fde.what() << std::endl;
     }
 }
 
 
-FileDescriptor& FileDescriptor::operator=(int fd)
-{
+FileDescriptor& FileDescriptor::operator=(int fd) {
     close();
-
     m_fd = fd;
-
     return *this;
 }
 
 
-FileDescriptor::operator int() const noexcept
-{
+FileDescriptor::operator int() const noexcept {
     return m_fd;
 }
 
 
-void FileDescriptor::close()
-{
-    if (m_fd == -1)
-    {
+void FileDescriptor::close() {
+    if (m_fd == -1) {
         return;
     }
 
-    while (::close(m_fd) != 0)
-    {
-        if (errno == EINTR)
-        {
+    while (::close(m_fd) != 0) {
+        if (errno == EINTR) {
             continue;
         }
 
@@ -72,14 +61,12 @@ void FileDescriptor::close()
 }
 
 
-int FileDescriptor::extract()
-{
+int FileDescriptor::extract() {
     return std::exchange(m_fd, -1);
 }
 
 
-bool FileDescriptor::is_opened() const noexcept
-{
+bool FileDescriptor::is_opened() const noexcept {
     return m_fd != -1;
 }
 

@@ -52,7 +52,7 @@ void ResponseBuilder::write_headers(const Request& request, status::value_type& 
 
     if (status == status::S_200_OK) {
         m_oss << "Content-Length: " << fs::file_size(request.path) << CRLF
-              << "Content-Type: " << determine_mime_type(request.path) << CRLF;
+              << "Content-Type: " << determine_content_type(request.path) << CRLF;
     }
 
     m_oss << CRLF;

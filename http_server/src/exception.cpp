@@ -5,13 +5,13 @@
 
 
 ErrnoException::ErrnoException()
-        : m_msg(std::strerror(errno))
+    : m_msg(std::strerror(errno))
 {
 }
 
 
 ErrnoException::ErrnoException(std::string  what_arg)
-        : m_msg(std::move(what_arg))
+    : m_msg(std::move(what_arg))
 {
     m_msg += std::strerror(errno);
 }

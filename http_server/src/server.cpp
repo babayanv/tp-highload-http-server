@@ -34,15 +34,13 @@ Server::Server(const std::string_view& address, uint16_t port, size_t max_connec
         m_workers.emplace_back([this, doc_root] { this->work(doc_root); });
     }
 
-    try
-    {
+    try {
         open(address, port);
         listen(static_cast<int>(max_connect));
         create_epoll();
         add_epoll(m_sock_fd, EPOLLIN);
     }
-    catch (const ServerError& se)
-    {
+    catch (const ServerError& se) {
         close();
         throw;
     }
@@ -54,24 +52,20 @@ Server::~Server() noexcept {
 }
 
 
-void Server::open(const std::string_view& address, uint16_t port)
-{
-    if (is_opened())
-    {
+void Server::open(const std::string_view& address, uint16_t port) {
+    if (is_opened()) {
         close();
     }
 
     m_sock_fd = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
-    if (m_sock_fd < 0)
-    {
+    if (m_sock_fd < 0) {
         throw ServerError("Error creating socket: ");
     }
 
     sockaddr_in serv_addr{};
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = ::htons(port);
-    if (::inet_aton(address.data(), &serv_addr.sin_addr) == 0)
-    {
+    if (::inet_aton(address.data(), &serv_addr.sin_addr) == 0) {
         throw ServerError("Invalid ipv4 address: ");
     }
 
@@ -86,8 +80,7 @@ void Server::open(const std::string_view& address, uint16_t port)
 
 void Server::listen(int max_connect) const
 {
-    if (::listen(m_sock_fd, max_connect) != 0)
-    {
+    if (::listen(m_sock_fd, max_connect) != 0) {
         throw ServerError("Socket listen failed: ");
     }
 }
@@ -114,40 +107,32 @@ void Server::join_workers() {
 }
 
 
-bool Server::is_opened() const noexcept
-{
+bool Server::is_opened() const noexcept {
     return m_sock_fd.is_opened();
 }
 
 
-void Server::run()
-{
+void Server::run() {
     constexpr size_t EPOLL_SIZE = 128;
     epoll_event events[EPOLL_SIZE];
 
-    while (is_opened())
-    {
+    while (is_opened()) {
         int fd_count = epoll_wait(m_epoll_fd, events, EPOLL_SIZE, -1);
-        if (fd_count < 0)
-        {
-            if (errno == EINTR)
-            {
+        if (fd_count < 0) {
+            if (errno == EINTR) {
                 continue;
             }
 
             throw ServerError("Error waiting epoll: ");
         }
 
-        for (int i = 0; i < fd_count; ++i)
-        {
+        for (int i = 0; i < fd_count; ++i) {
             int fd = events[i].data.fd;
 
-            if (fd == m_sock_fd)
-            {
+            if (fd == m_sock_fd) {
                 accept_clients();
             }
-            else
-            {
+            else {
                 handle_client(fd, events[i]);
             }
         }
@@ -161,33 +146,27 @@ void Server::handle_signal(int) {
 }
 
 
-void Server::create_epoll()
-{
+void Server::create_epoll() {
     m_epoll_fd = epoll_create(1);
-    if (m_epoll_fd < 0)
-    {
+    if (m_epoll_fd < 0) {
         throw ServerError("Error creating epoll: ");
     }
 }
 
 
-void Server::add_epoll(int fd, uint32_t events) const
-{
+void Server::add_epoll(int fd, uint32_t events) const {
     epoll_event event{};
     event.data.fd = fd;
     event.events = events;
 
-    if (epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &event) < 0)
-    {
+    if (epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &event) < 0) {
         throw ServerError("Error adding fd to epoll: ");
     }
 }
 
 
-void Server::accept_clients()
-{
-    while (true)
-    {
+void Server::accept_clients() {
+    while (true) {
         sockaddr_in client_addr{};
         socklen_t addr_size = sizeof(client_addr);
 
@@ -195,14 +174,11 @@ void Server::accept_clients()
                                 reinterpret_cast<sockaddr*>(&client_addr),
                                 &addr_size,
                                 SOCK_NONBLOCK);
-        if (conn_fd < 0)
-        {
-            if (errno == EINTR)
-            {
+        if (conn_fd < 0) {
+            if (errno == EINTR) {
                 continue;
             }
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
-            {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 return;
             }
 
@@ -214,8 +190,7 @@ void Server::accept_clients()
 }
 
 
-void Server::handle_client(int fd, epoll_event event)
-{
+void Server::handle_client(int fd, epoll_event event) {
     if (event.events & EPOLLHUP ||
         event.events & EPOLLERR ||
         event.events & EPOLLRDHUP)
