@@ -28,7 +28,6 @@ public:
     size_t write(const void* data, size_t len) const;
     void write_exact(const void* data, size_t len) const;
     size_t read(void* data, size_t len);
-    void read_exact(void* data, size_t len);
     std::string read_all(long limit);
 
     size_t send_file(std::string_view filename);

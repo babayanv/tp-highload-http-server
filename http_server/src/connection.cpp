@@ -88,25 +88,6 @@ size_t Connection::read(void* data, size_t len) {
 }
 
 
-void Connection::read_exact(void* data, size_t len)
-{
-    size_t bytes_read_total = 0;
-
-    while (bytes_read_total < len)
-    {
-        void* buff_begin = static_cast<char*>(data) + bytes_read_total;
-
-        size_t bytes_read = read(buff_begin, len - bytes_read_total);
-        if (bytes_read == 0)
-        {
-            throw ConnectionError("Unable to read exactly " + std::to_string(len) + " bytes: ");
-        }
-
-        bytes_read_total += bytes_read;
-    }
-}
-
-
 std::string Connection::read_all(long limit) {
     std::ostringstream oss;
 
