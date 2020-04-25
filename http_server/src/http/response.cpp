@@ -20,11 +20,11 @@ void ResponseBuilder::operator()(Connection& conn, const Request& request, statu
 
     write_headers(request, status);
 
-    if (status == status::S_200_OK && request.method == method::M_GET) {
-        write_file_content(request.path);
-    }
-
     conn.write_exact(m_oss.str().c_str(), static_cast<size_t>(m_oss.tellp()));
+
+    if (status == status::S_200_OK && request.method == method::M_GET) {
+        conn.send_file(request.path);
+    }
 }
 
 
@@ -56,18 +56,6 @@ void ResponseBuilder::write_headers(const Request& request, status::value_type& 
     }
 
     m_oss << CRLF;
-}
-
-
-void ResponseBuilder::write_file_content(const std::string_view& file_path) {
-    namespace fs = std::filesystem;
-
-    std::ifstream ifs(file_path.data());
-
-    std::string content(fs::file_size(file_path), '\0');
-    long bytes_read = ifs.readsome(content.data(), static_cast<long>(content.size()));
-
-    m_oss.write(content.c_str(), bytes_read);
 }
 
 

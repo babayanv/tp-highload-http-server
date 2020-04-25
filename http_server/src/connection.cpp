@@ -1,10 +1,11 @@
 #include "http_server/connection.hpp"
 #include "http_server/exception.hpp"
 
-#include <sys/socket.h>
+#include <sys/fcntl.h>
+#include <sys/sendfile.h>
 #include <unistd.h>
 
-#include <sstream>
+#include <filesystem>
 
 
 Connection::Connection(int sock_fd)
@@ -138,4 +139,31 @@ std::string Connection::read_all(long limit) {
     }
 
     return oss.str();
+}
+
+
+size_t Connection::send_file(std::string_view file_path) {
+    namespace fs = std::filesystem;
+
+    utils::FileDescriptor file_fd = ::open(file_path.data(), O_RDONLY);
+    if (file_fd < 0) {
+        throw ConnectionError("Error sending file to socket: ");
+    }
+
+    while (true) {
+        ssize_t bytes_written = ::sendfile(m_sock_fd, file_fd, nullptr, fs::file_size(file_path));
+
+        if (bytes_written < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                return 0;
+            }
+
+            throw ConnectionError("Error sending file to socket: ");
+        }
+
+        return static_cast<size_t>(bytes_written);
+    }
 }

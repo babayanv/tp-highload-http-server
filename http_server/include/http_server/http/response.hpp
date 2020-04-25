@@ -26,7 +26,6 @@ private:
 private:
     void check_file_availability(const std::string_view& file_path, status::value_type& status);
     void write_headers(const Request& request, status::value_type& status);
-    void write_file_content(const std::string_view& file_path);
 };
 
 

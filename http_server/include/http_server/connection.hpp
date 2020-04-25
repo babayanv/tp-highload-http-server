@@ -31,6 +31,8 @@ public:
     void read_exact(void* data, size_t len);
     std::string read_all(long limit);
 
+    size_t send_file(std::string_view filename);
+
 private:
     utils::FileDescriptor m_sock_fd;
 };
